@@ -13,5 +13,9 @@
   "scripts": {
     "dev": "nodemon app.js",
     "test": "echo \\\\\\\"Error: no test specified\\\\\\\" && edit 1"
+  },
+  "dependencies": {
+    "chalk": "^6.0.0",
+    "i": "^0.3.7"
   }
 }
