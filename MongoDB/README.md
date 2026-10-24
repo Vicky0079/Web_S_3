@@ -90,15 +90,15 @@ db.students.insertMany([
 Note: Aman and Sneha were inserted with the misspelled field semster instead of semester. This caused several queries on semester to skip those documents.
 
 Read Operations
-Retrieve all / one
+Retrieve All / One
 javascript
 db.students.find()
 db.students.findOne()
 db.students.findOne({ name: "Sneha" })   // returns first match
-Filter by field value
+Filter by Field Value
 javascript
 db.students.find({ course: "BCA" })
-Filter by multiple fields (implicit AND)
+Filter by Multiple Fields (Implicit AND)
 javascript
 db.students.find({ course: "BCA", semster: 5 })
 Comparison Operators
@@ -106,11 +106,11 @@ javascript
 db.students.find({ marks: { $gt: 80 } })    // marks greater than 80
 db.students.find({ age:   { $gte: 21 } })   // age greater than or equal to 21
 Operator	Meaning
-$gt	greater than
-$gte	greater than or equal
-$lt	less than
-$lte	less than or equal
-$ne	not equal
+$gt	Greater than
+$gte	Greater than or equal
+$lt	Less than
+$lte	Less than or equal
+$ne	Not equal
 Logical Operators
 javascript
 db.students.find({
@@ -119,10 +119,10 @@ db.students.find({
 Returns documents that match either condition.
 
 Operator	Meaning
-$or	match any condition
-$and	match all conditions (same as comma-separated fields)
-$not	negate a condition
-Projection (select specific fields)
+$or	Match any condition
+$and	Match all conditions (same as comma-separated fields)
+$not	Negate a condition
+Projection (Select Specific Fields)
 javascript
 db.students.find({}, { name: 1, marks: 1, _id: 0 })
 1 → include the field
@@ -142,8 +142,10 @@ db.students.find(
   { course: "BCA", semester: 5 },
   { name: 1, marks: 1, _id: 0 }
 ).sort({ marks: -1 })
-Result: [ { name: 'Rahul', marks: 82 } ]
+Result:
 
+json
+[ { name: 'Rahul', marks: 82 } ]
 javascript
 db.students.find(
   { course: "BCA" },
@@ -151,7 +153,7 @@ db.students.find(
 ).sort({ marks: -1 })
 Result:
 
-javascript
+json
 [
   { name: 'Sneha', marks: 88 },
   { name: 'Rahul', marks: 82 },
