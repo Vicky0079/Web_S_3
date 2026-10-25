@@ -161,3 +161,107 @@ json
   { name: 'Rahul' }
 ]
 Rahul (the first-inserted doc) has no marks field, so it appears last in descending sort and shows only name in projection.
+
+markdown
+# MongoDB Aggregation & Indexing — Practice Notes
+
+Hands-on practice for **Lecture 23: Aggregation Pipeline + Indexing in MongoDB**, using `mongosh` on the `collageDB` database.
+
+---
+
+## 1. Aggregation Pipeline Stages
+
+The aggregation framework processes documents through a multi-stage pipeline.
+
+### `$match` (Filtering)
+Filters documents to pass only those matching the specified condition.
+```javascript
+db.students.aggregate([
+  { $match: { course: "BCA" } }
+])
+$project (Selecting Fields)
+Reshapes documents by including or excluding fields (similar to .find() projection).
+
+javascript
+db.students.aggregate([
+  { $project: { name: 1, marks: 1, _id: 0 } }
+])
+$group (Aggregating Data)
+Groups documents by a specified key (_id) and performs calculations like $sum, $avg, etc.
+
+javascript
+db.students.aggregate([
+  { 
+    $group: { 
+      _id: "$course", 
+      averageMarks: { $avg: "$marks" }, 
+      totalStudents: { $sum: 1 } 
+    } 
+  }
+])
+Result Note: Courses with no marks field (like BBA) return null for averageMarks. The $sum: 1 counts every document in the group.
+
+$sort (Ordering)
+Sorts documents (1 for ascending, -1 for descending).
+
+javascript
+db.students.aggregate([
+  { $sort: { marks: -1 } }
+])
+Result Note: Documents missing the marks field are placed at the bottom when sorting descending.
+
+$limit (Restricting Output)
+Limits the number of documents passed to the next stage.
+
+javascript
+db.students.aggregate([
+  { $limit: 2 }
+])
+$count (Counting Documents)
+Returns a single document containing the total count.
+
+javascript
+db.students.aggregate([
+  { $count: "TotalStudents" }
+])
+// Output: [ { TotalStudents: 7 } ]
+2. Chaining Pipeline Stages
+Stages can be combined to perform complex queries. The output of one stage becomes the input for the next.
+
+javascript
+db.students.aggregate([
+  { $match: { course: 'BCA' } },
+  { $group: { _id: "$semester", averageMarks: { $avg: "$marks" }, totalStudents: { $sum: 1 } } },
+  { $sort: { averageMarks: -1 } }
+])
+What this does:
+
+Filters only BCA students.
+
+Groups them by semester, calculating average marks and counting students.
+
+Sorts the resulting groups by average marks in descending order.
+
+3. Indexing
+Indexes improve the speed of read operations by allowing MongoDB to search efficiently without scanning the entire collection.
+
+Create a Single-Field Index
+javascript
+db.students.createIndex({ rollNo: 1 })
+// Output: rollNo_1
+Create a Compound Index
+javascript
+db.students.createIndex({ course: 1, semster: 1 })
+// Output: course_1_semster_1
+View All Indexes
+javascript
+db.students.getIndexes()
+Output:
+
+json
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { rollNo: 1 }, name: 'rollNo_1' },
+  { v: 2, key: { course: 1, semster: 1 }, name: 'course_1_semster_1' }
+]
+Note: The _id_ index is created automatically by MongoDB for every collection.
