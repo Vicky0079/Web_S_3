@@ -290,3 +290,154 @@ Planning the database structure **before** storing data.
 ## 4. Why It Matters
 - Good design = organized data, minimal redundancy, clear relationships, easier scaling.
 - Poor design = duplicates, hard updates, slow queries, complex logic.
+
+markdown
+# Mongoose Connection Setup
+
+## 1. Install Mongoose
+Run this in your terminal to add Mongoose to your Node.js project:
+```bash
+npm install mongoose
+2. Connect to MongoDB
+Instead of using .then() and .catch() (as shown in older tutorials), it is best practice to use async/await with a try/catch block.
+
+Code Implementation (index.js)
+javascript
+const mongoose = require('mongoose');
+
+async function connectDB() {
+  try {
+    // Make sure to include your database name (e.g., tour&travel) at the end of the URL
+    await mongoose.connect('mongodb://127.0.0.1:27017/tour&travel');
+    console.log('MongoDB connected successfully!');
+  } catch (err) {
+    console.error('MongoDB connection failed:', err.message);
+    process.exit(1); // Exit process with failure code
+  }
+}
+
+connectDB();
+3. Verification
+To ensure the connection is working and pointing to the right database, open your terminal and run:
+
+bash
+mongosh
+use tour&travel
+db.tours.find()
+
+markdown
+# Mongoose Setup: Schemas, Models, and Data Insertion
+
+This guide documents the setup for connecting a Node.js application to MongoDB using **Mongoose**, defining a Schema, and inserting data.
+
+---
+
+## 📂 Project Structure
+```text
+day_12/
+├── model/
+│   └── tour.js       # Contains the Schema and Model
+├── index.js          # Main entry point (Database connection & execution)
+├── package.json
+└── node_modules/
+1. Installing Mongoose
+Run this command in your terminal to install Mongoose in your project:
+
+bash
+npm install mongoose
+2. Defining a Schema and Model (model/tour.js)
+Mongoose uses Schemas to enforce data structure, and Models to interact with the database.
+
+Create a file tour.js inside the model folder:
+
+javascript
+const mongoose = require('mongoose');
+
+// 1. Define the Schema (The blueprint)
+const tourSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: [true, 'A tour must have a name']
+    },
+    description: {
+        type: String
+    },
+    destination: {
+        type: String,
+        required: true
+    },
+    duration: {
+        type: String
+    }
+});
+
+// 2. Create the Model
+const Tour = mongoose.model('Tour', tourSchema);
+
+// 3. Export the Model so it can be used in other files
+module.exports = Tour;
+Note: Mongoose automatically pluralizes the model name. Tour becomes the tours collection in MongoDB.
+
+3. Connecting and Saving Data (index.js)
+Use async/await to connect to the database, and wait for the connection to succeed before attempting to insert data.
+
+javascript
+const mongoose = require('mongoose');
+
+// Import the Tour model from the model folder
+const Tour = require('./model/tour'); 
+
+async function connectDB() {
+    try {
+        // Connect to the local MongoDB database named 'tour&travel'
+        await mongoose.connect('mongodb://127.0.0.1:27017/tour&travel');
+        console.log('MongoDB connected successfully!');
+        
+        // Call createTour ONLY AFTER the connection is successful
+        await createTour(); 
+
+    } catch (err) {
+        console.error('MongoDB connection failed:', err.message);
+        process.exit(1);
+    }
+}
+
+async function createTour() {
+    try {
+        // Create a new document using the Schema rules
+        const newTour = await Tour.create({
+            name: "Mountain Hiking",
+            description: "Explore the beautiful mountains.",
+            destination: "Manali",
+            duration: "5 days"
+        });
+        console.log("Tour saved successfully:", newTour);
+    } catch (error) {
+        console.log("Error saving tour:", error.message);
+    }
+}
+
+// Run the connection
+connectDB();
+4. Execution & Verification
+Run the script
+bash
+node index.js
+Expected Output
+text
+MongoDB connected successfully!
+Tour saved successfully: {
+  name: 'Mountain Hiking',
+  description: 'Explore the beautiful mountains.',
+  destination: 'Manali',
+  duration: '5 days',
+  _id: new ObjectId('...'),
+  __v: 0
+}
+Verify in MongoDB Shell (mongosh)
+Open a new terminal and check the database:
+
+bash
+mongosh
+use tour&travel
+db.tours.find()
