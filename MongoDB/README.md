@@ -265,3 +265,28 @@ json
   { v: 2, key: { course: 1, semster: 1 }, name: 'course_1_semster_1' }
 ]
 Note: The _id_ index is created automatically by MongoDB for every collection.
+
+# MongoDB Data Modelling & Relationships — Lecture Notes
+
+## 1. What is Data Modelling?
+Planning the database structure **before** storing data.
+- Defines what data is stored, how documents are structured, and how collections relate.
+- Prevents data duplication, inconsistency, and slow queries.
+
+## 2. Components of a Data Model
+- **Database** → Container for collections.
+- **Collection** → Group of related documents.
+- **Document** → A single record.
+- **Field** → An attribute.
+- **Relationship** → Connection between documents.
+
+## 3. Types of Relationships
+| Type | Example | Description |
+| :--- | :--- | :--- |
+| **One-to-One (1:1)** | Employee → ID Card | Each record relates to exactly one other. |
+| **One-to-Many (1:N)** | Department → Students | One document relates to many. |
+| **Many-to-Many (M:N)** | Students ↔ Courses | Multiple records relate to multiple. |
+
+## 4. Why It Matters
+- Good design = organized data, minimal redundancy, clear relationships, easier scaling.
+- Poor design = duplicates, hard updates, slow queries, complex logic.
